@@ -1,5 +1,5 @@
-PeerDB
-======
+PeerDB v0.3.8
+=============
 
 Meteor smart package which provides database support for collaborative documents. Implemented features are:
  * reactive references between documents
