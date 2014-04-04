@@ -39,7 +39,8 @@ _.extend Document._GeneratedField.prototype,
 
 Document._ReferenceField = class extends Document._ReferenceField
   updateSource: (id, fields) =>
-    console.log "[PDB] "+@sourceCollection._name+ " updateSource('"+id+"', '"+fields+"')"
+    if process.env.PEER_DEBUG
+      console.log "[PDB] "+@sourceCollection._name+ " updateSource('"+id+"', '"+fields+"')"
     
     # Just to be sure
     return if _.isEmpty fields
@@ -111,7 +112,8 @@ Document._ReferenceField = class extends Document._ReferenceField
       break unless @inArray
 
   removeSource: (id) =>
-    console.log "[PDB] "+@sourceCollection._name+ " removeSource('"+id+"')"
+    if process.env.PEER_DEBUG
+      console.log "[PDB] "+@sourceCollection._name+ " removeSource('"+id+"')"
     
     selector = {}
     selector["#{ @sourcePath }._id"] = id
@@ -152,7 +154,8 @@ Document._ReferenceField = class extends Document._ReferenceField
       @sourceCollection.directRemove selector
 
   updatedWithValue: (id, value) =>
-    console.log "[PDB] "+@sourceCollection._name+ " updateWithValue('"+id+"', '"+value+"')"
+    if process.env.PEER_DEBUG
+      console.log "[PDB] "+@sourceCollection._name+ " updateWithValue('"+id+"', '"+value+"')"
     
     unless _.isObject(value) and _.isString(value._id)
       # Optional field
@@ -374,10 +377,9 @@ Meteor.startup ->
   # TODO: Use official API when it will be available: https://github.com/meteor/meteor/issues/180
   if process.env.NODE_ENV is 'production' or Meteor.settings?.production or Meteor.settings?.public?.production
     # Setup observers and run all initial updates in blocking mode on production
-    Meteor.defer ->
-      console.log "PeerDB: [PRD] Setting Up Observers..."
-      setupObservers()
-      console.log "PeerDB: Observer Setup Complete."
+    console.log "PeerDB: [PRD] Setting Up Observers..."
+    setupObservers()
+    console.log "PeerDB: Observer Setup Complete."
   else
     # Otherwise do it in the background
     Meteor.defer ->
