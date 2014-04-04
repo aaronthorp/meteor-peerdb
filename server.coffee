@@ -106,7 +106,7 @@ Document._ReferenceField = class extends Document._ReferenceField
     # So if we are in the array, we have to loop until nothing changes.
     # See: https://jira.mongodb.org/browse/SERVER-1243
     loop
-      break unless @sourceCollection.update selector, update, multi: true
+      break unless @sourceCollection.directUpdate selector, update, multi: true
       break unless @inArray
 
   removeSource: (id) =>
