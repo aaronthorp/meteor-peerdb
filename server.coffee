@@ -40,7 +40,7 @@ _.extend Document._GeneratedField.prototype,
 Document._ReferenceField = class extends Document._ReferenceField
   updateSource: (id, fields) =>
     console.log "[PDB] "+@sourceCollection._name+ " updateSource('"+id+"', '"+fields+"')"
-    console.log @sourcePath
+    
     # Just to be sure
     return if _.isEmpty fields
 
@@ -106,6 +106,7 @@ Document._ReferenceField = class extends Document._ReferenceField
     # $ operator updates only the first matching element in the array.
     # So if we are in the array, we have to loop until nothing changes.
     # See: https://jira.mongodb.org/browse/SERVER-1243
+    console.log update
     loop
       break unless @sourceCollection.directUpdate selector, update, multi: true
       break unless @inArray
