@@ -200,7 +200,7 @@ Document._GeneratedField = class extends Document._GeneratedField
       update.$set = {}
       update.$set[@sourcePath] = sourceValue
 
-    @sourceCollection.update selector, update, multi: true
+    @sourceCollection.directUpdate selector, update, multi: true
 
   _updateSourceNestedArray: (id, fields) =>
     assert @arraySuffix # Should be non-null
@@ -228,7 +228,7 @@ Document._GeneratedField = class extends Document._GeneratedField
         update.$set = {}
         update.$set[path] = sourceValue
 
-      break unless @sourceCollection.update selector, update, multi: true
+      break unless @sourceCollection.directUpdate selector, update, multi: true
 
   updateSource: (id, fields) =>
     if _.isEmpty fields
@@ -236,7 +236,7 @@ Document._GeneratedField = class extends Document._GeneratedField
     # TODO: Not completely correct when @fields contain multiple fields from same subdocument or objects with projections (they will be counted only once) - because Meteor always passed whole subdocuments we could count only top-level fields in @fields, merged with objects?
     else if _.size(fields) isnt @fields.length
       targetFields = fieldsToProjection @fields
-      fields = @targetCollection.findOne id,
+      fields = @targetCollection.directFindOne id,
         fields: targetFields
         transform: null
 
@@ -374,8 +374,12 @@ Meteor.startup ->
   # TODO: Use official API when it will be available: https://github.com/meteor/meteor/issues/180
   if process.env.NODE_ENV is 'production' or Meteor.settings?.production or Meteor.settings?.public?.production
     # Setup observers and run all initial updates in blocking mode on production
+    console.log "PeerDB: Setting Up Observers..."
     setupObservers()
+    console.log "PeerDB: Observer Setup Complete."
   else
     # Otherwise do it in the background
     Meteor.defer ->
+      console.log "PeerDB: Setting Up Observers..."
       setupObservers()
+      console.log "PeerDB: Observer Setup Complete."
