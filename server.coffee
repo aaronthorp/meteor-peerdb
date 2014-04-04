@@ -40,7 +40,7 @@ _.extend Document._GeneratedField.prototype,
 Document._ReferenceField = class extends Document._ReferenceField
   updateSource: (id, fields) =>
     console.log "[PDB] "+@sourceCollection._name+ " updateSource('"+id+"', '"+fields+"')"
-    
+    console.log fields
     # Just to be sure
     return if _.isEmpty fields
 
@@ -329,7 +329,7 @@ Document = class extends Document
       added: catchErrors (id, fields) =>
         return if fields._schema
 
-        @Meta.collection.update id,
+        @Meta.collection.directUpdate id,
           $set:
             _schema: '1.0.0'
 
