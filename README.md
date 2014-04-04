@@ -1,6 +1,8 @@
 PeerDB v0.3.8
 =============
 
+Initial Commit + Stacktrace module
+
 Meteor smart package which provides database support for collaborative documents. Implemented features are:
  * reactive references between documents
  * reactive auto-generated fields from other fields
