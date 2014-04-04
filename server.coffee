@@ -106,7 +106,6 @@ Document._ReferenceField = class extends Document._ReferenceField
     # $ operator updates only the first matching element in the array.
     # So if we are in the array, we have to loop until nothing changes.
     # See: https://jira.mongodb.org/browse/SERVER-1243
-    console.log selector
     loop
       break unless @sourceCollection.directUpdate selector, update, multi: true
       break unless @inArray
@@ -375,12 +374,13 @@ Meteor.startup ->
   # TODO: Use official API when it will be available: https://github.com/meteor/meteor/issues/180
   if process.env.NODE_ENV is 'production' or Meteor.settings?.production or Meteor.settings?.public?.production
     # Setup observers and run all initial updates in blocking mode on production
-    console.log "PeerDB: Setting Up Observers..."
-    setupObservers()
-    console.log "PeerDB: Observer Setup Complete."
+    Meteor.defer ->
+      console.log "PeerDB: [PRD] Setting Up Observers..."
+      setupObservers()
+      console.log "PeerDB: Observer Setup Complete."
   else
     # Otherwise do it in the background
     Meteor.defer ->
-      console.log "PeerDB: Setting Up Observers..."
+      console.log "PeerDB: [DEV] Setting Up Observers..."
       setupObservers()
       console.log "PeerDB: Observer Setup Complete."
