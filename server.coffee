@@ -40,6 +40,7 @@ _.extend Document._GeneratedField.prototype,
 Document._ReferenceField = class extends Document._ReferenceField
   updateSource: (id, fields) =>
     console.log "[PDB] "+@sourceCollection._name+ " updateSource('"+id+"', '"+fields+"')"
+    
     # Just to be sure
     return if _.isEmpty fields
 
@@ -110,6 +111,8 @@ Document._ReferenceField = class extends Document._ReferenceField
       break unless @inArray
 
   removeSource: (id) =>
+    console.log "[PDB] "+@sourceCollection._name+ " removeSource('"+id+"')"
+    
     selector = {}
     selector["#{ @sourcePath }._id"] = id
 
@@ -121,7 +124,7 @@ Document._ReferenceField = class extends Document._ReferenceField
       # @arraySuffix starts with a dot, so with .substring(1) we always remove a dot
       update.$pull[@ancestorArray]["#{ @arraySuffix or '' }._id".substring(1)] = id
 
-      @sourceCollection.update selector, update, multi: true
+      @sourceCollection.directUpdate selector, update, multi: true
 
     # If it is an optional field of a subdocument in an array, we set it to null
     else if not @required and @inArray
@@ -134,7 +137,7 @@ Document._ReferenceField = class extends Document._ReferenceField
       # So we have to loop until nothing changes.
       # See: https://jira.mongodb.org/browse/SERVER-1243
       loop
-        break unless @sourceCollection.update selector, update, multi: true
+        break unless @sourceCollection.directUpdate selector, update, multi: true
 
     # If it is an optional reference, we set it to null
     else if not @required
@@ -142,13 +145,15 @@ Document._ReferenceField = class extends Document._ReferenceField
         $set: {}
       update.$set[@sourcePath] = null
 
-      @sourceCollection.update selector, update, multi: true
+      @sourceCollection.directUpdate selector, update, multi: true
 
     # Else, we remove the whole document
     else
-      @sourceCollection.remove selector
+      @sourceCollection.directRemove selector
 
   updatedWithValue: (id, value) =>
+    console.log "[PDB] "+@sourceCollection._name+ " updateWithValue('"+id+"', '"+value+"')"
+    
     unless _.isObject(value) and _.isString(value._id)
       # Optional field
       return if _.isNull(value) and not @required
@@ -161,7 +166,7 @@ Document._ReferenceField = class extends Document._ReferenceField
     return if _.isEmpty @fields
 
     referenceFields = fieldsToProjection @fields
-    target = @targetCollection.findOne value._id,
+    target = @targetCollection.directFindOne value._id,
       fields: referenceFields
       transform: null
 
