@@ -106,7 +106,7 @@ Document._ReferenceField = class extends Document._ReferenceField
     # $ operator updates only the first matching element in the array.
     # So if we are in the array, we have to loop until nothing changes.
     # See: https://jira.mongodb.org/browse/SERVER-1243
-    console.log update
+    console.log selector
     loop
       break unless @sourceCollection.directUpdate selector, update, multi: true
       break unless @inArray
