@@ -39,7 +39,7 @@ _.extend Document._GeneratedField.prototype,
 
 Document._ReferenceField = class extends Document._ReferenceField
   updateSource: (id, fields) =>
-    console.log "[PDB] updateSource()"+@sourceCollection._name
+    console.log "[PDB] "+@sourceCollection._name+ " updateSource('"+id+"', '"+fields+"')"
     # Just to be sure
     return if _.isEmpty fields
 
